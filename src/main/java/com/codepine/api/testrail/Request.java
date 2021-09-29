@@ -174,7 +174,7 @@ public abstract class Request<T> {
                     con.setFixedLengthStreamingMode(0);
                 }
             }
-            log.debug("Sending " + method + " request to URL : " + url);
+            System.out.println("Sending " + method + " request to URL : " + url);
             int responseCode = 0;
             try {
                 responseCode = con.getResponseCode();
@@ -182,7 +182,7 @@ public abstract class Request<T> {
                 // swallow it since for 401 getResponseCode throws an IOException
                 responseCode = con.getResponseCode();
             }
-            log.debug("Response Code : " + responseCode);
+            System.out.println("Response Code : " + responseCode);
 
             if (responseCode != HttpURLConnection.HTTP_OK) {
                 try (InputStream errorStream = con.getErrorStream()) {
@@ -223,13 +223,16 @@ public abstract class Request<T> {
                             PageDeserializer.field = matcher.group(1);
                         try {
                             PageDeserializer.type = Class.forName(((ParameterizedType) responseType.getType()).getActualTypeArguments()[0].getTypeName());
-                        }
-                        catch(Exception e) {
+                        } catch(Exception e) {
                             return ((T)new ArrayList());
                         }
                         Page<T> page = JSON.readValue(payload, pageType);
                         if (page._links.next != null) {
                             restPath = page._links.next;
+                            Matcher restPathMatcher = Pattern.compile("get_.*").matcher(restPath);
+                            if(restPathMatcher.find()) {
+                                restPath = restPathMatcher.group();
+                            };
                             T concat = execute();
                             T models = page.objects;
                             ((List)models).addAll(((List)concat));
