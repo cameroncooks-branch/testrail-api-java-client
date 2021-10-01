@@ -1,0 +1,21 @@
+2.0.2
+
+## TO INSTALL THIS JAR FILE TO BRANCH-MICRO
+
+## BUILD
+mvn clean package -DskipTests=true
+
+## INSTALL TO LOCAL REPO
+cd branch-micro
+mvn install:install-file -Dfile=/Users/cameron.cooks/github/branch/testrail-api-java-client/target/testrail-api-java-client-2.0.3-Scytl.jar -DgroupId=com.codepine
+.api -DartifactId=testrail-api-java-client -Dversion=2.0.0 -Dpackaging=jar -DgeneratePom=true
+
+## DEPLOY TO NEXUS
+mvn deploy:deploy-file -DgroupId=io.branch.testrail \
+    -DartifactId=testrail-api-java-client \
+    -Dversion=2.0.2 \
+    -Dpackaging=jar \
+    -Dfile=testrail-api-java-client-2.0.2.jar \
+    -DgeneratePom=true \
+    -DrepositoryId=nexus \
+    -Durl=http://admin.branch.io:8081/nexus/content/repositories/releases/
